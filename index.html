@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <input v-model="phone" type="tel">
+    <br>
+    <button @click="click">click</button>
+  </div>
+  <script src="https://ru.vuejs.org/js/vue.js"></script>
+  <script>
+    Array.prototype.intersect = function(a) {
+      return this.filter(x => a.includes(x));
+    }
+
+    new Vue({
+      el: '#app',
+      data: {
+        phoneData: '',
+        allowedSymbols: new Array(11).fill(0).map((item, index) => index === 10 ? '+' : `${item + index}`)
+      },
+      computed: {
+        phone: {
+          get() {
+            return this.phoneData
+          },
+          set(value) {
+            let cleared = value.split('').intersect(this.allowedSymbols).join('')
+
+            console.log(cleared)
+
+            if (value[0] === '8') {
+              cleared = cleared.replace('8', '7')
+            }
+
+            if (cleared.length >= 11 && cleared[0] !== '+') {
+              cleared = cleared.slice(0, 11)
+            }
+
+            const formatted = cleared.replace(/\D/g, '').split(/(?=.)/)
+            
+            if (formatted.join('').length > 0) formatted.unshift('+')
+            if (formatted.length >= 0) formatted.splice(2, 0, ' ')
+            if (formatted.length >= 3) formatted.splice(6, 0, ' ')
+            if (formatted.length >= 6) formatted.splice(10, 0, ' ')
+            if (formatted.length >= 8) formatted.splice(13, 0, ' ')
+
+            this.phoneData = formatted.join('')
+          }
+        }
+      },
+      methods: {
+        click() {
+          console.log(this.allowedSymbols)
+          console.log(this.phone)
+          console.log(this.phone.length)
+
+          console.log(['1', '2', '3', '.', ','].intersect(['1', '2', '3', '4', '5']))
+        }
+      },
+    })
+  </script>
+</body>
+</html>
